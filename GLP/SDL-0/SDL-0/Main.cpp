@@ -6,7 +6,7 @@
 
 #include "Game.h"
 #include "Timer.h"
-#include "WIndow.h"
+#include "Window.h"
 
 
 using namespace std;
@@ -16,7 +16,9 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	
+	// Exercice fichier shader separes //
+
+	/*
 	string const nomFichier1 = "vert.txt";
 
 	string const nomFichier2 = "frag.txt";
@@ -46,9 +48,10 @@ int main(int argc, char* argv[])
 		mFlux2.close();
 	}else{ cout << "impossible d'ouvrir " << nomFichier2 << " en lecture!" << endl; }
 
+	*/
 
 		////////////INITIALIZE SDL2 (Simple Direct Media Layer v2.)///////////////
-
+	/*
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		{
 			cout << "SDL initialization failed. SDL Error: " << SDL_GetError();
@@ -111,11 +114,11 @@ int main(int argc, char* argv[])
 		vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
 
-		//now that we have a vertex shader, let’s put the code text inside
+		//now that we have a vertex shader, letâ€™s put the code text inside
 		glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 
 
-		//aaaaand… Compile !
+		//aaaaandâ€¦ Compile !
 		glCompileShader(vertexShader);
 
 
@@ -190,8 +193,49 @@ int main(int argc, char* argv[])
 		// Quit
 		SDL_DestroyWindow(Window);
 		SDL_GL_DeleteContext(Context);
+		*/
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+	const int SCREEN_WIDTH = 800;
+	const int SCREEN_HEIGHT = 640;
+
+	//Init window
+	Window window = Window("Hello SDL");
+	if (!window.init(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false)) {
+		return 1;
+	}
 
 
+	//init game
+	Timer timer;
+	Game game;
+
+	game.init(SCREEN_WIDTH, SCREEN_HEIGHT);
+	game.load();
+
+	//delta time in seconds
+	float dt;
+
+	//Game loop
+	while (game.isRunning) {
+		dt = static_cast<float>(timer.computeDeltaTime()) / 1000.0f;
+		window.updateFPSCounter(dt);
+
+		game.handleInputs();
+		game.update(dt);
+
+		window.clearBuffer();
+		game.render();
+		window.swapBuffer();
+
+		//Delay frame if game runs too fast
+		timer.delayTime();
+	}
+
+	//Exit the game
+	game.clean();
+	window.clean();
 	
 	return 0;
 }

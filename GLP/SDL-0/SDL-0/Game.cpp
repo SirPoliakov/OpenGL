@@ -25,15 +25,35 @@ void Game::load() {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-
 	const char* vertexShader =
 		"#version 460\n"
 		"out vec4 color;"
 		"void main () {"
-		" color = vec4 (0.8, 0.5, 0.0, 1.0);"
+		" gl_Position = vec4 (vp, 1.0);"
 		"}";
 
-	GLuint vs = GLCreat
+	const char* fragmentShader =
+		"#version 460\n"
+		"out vec4 color;"
+		"void main () {"
+		" color = vec4 (0.8, 0.3, 0.0, 1.0);"
+		"}";
+
+
+
+	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vs, 1, &vertexShader, NULL);
+	glCompileShader(vs);
+
+	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fs, 1, &fragmentShader, NULL);
+	glCompileShader(fs);
+
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, fs);
+	glAttachShader(shaderProgram, vs);
+	glLinkProgram(shaderProgram);
+
 }
 
 void Game::handleInputs() {
@@ -62,7 +82,9 @@ void Game::update(float dt) {
 }
 
 void Game::render() {
-
+	glUseProgram(shaderProgram);
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void Game::clean() {
